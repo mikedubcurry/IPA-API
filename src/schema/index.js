@@ -1,20 +1,17 @@
+// TODO: split typedefs and resolvers into separate files
+// TODO: create controllers to run in resolvers
 const { gql } = require("apollo-server-express");
 
-const ipas = [
-    {
-        name: "Mike's Juicy Drank",
-        description: "A juicy ipa with notes of pineapple and evergreen.",
-    },
-    {
-        name: "Hazy Little Thing",
-        description: "A dry, hazy IPA packed full of flavor and stuff.",
-    },
-];
+const { Ipa } = require("../model");
 
 const typeDefs = gql`
     type IPA {
         name: String
         description: String
+        isAlcoholic: Boolean
+        alcohol: Float
+        brewer: String
+        _id: ID
     }
 
     type Query {
@@ -24,7 +21,10 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        ipas: () => ipas,
+        ipas: async () => {
+            const ipas = await Ipa.find({});
+            return ipas;
+        },
     },
 };
 
