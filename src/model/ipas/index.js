@@ -23,6 +23,10 @@ const IpaSchema = new Schema({
         type: String,
         required: true,
     },
+    reviews: {
+        type: [Schema.Types.ObjectId],
+        required: false,
+    },
 });
 
 module.exports = mongoose.model("Ipa", IpaSchema);
