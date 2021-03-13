@@ -4,6 +4,7 @@ const { gql } = require("apollo-server-express");
 
 const { Ipa } = require("../model");
 
+// TODO: update typeDefs to match db models
 const typeDefs = gql`
     type IPA {
         name: String
@@ -11,7 +12,15 @@ const typeDefs = gql`
         isAlcoholic: Boolean
         alcohol: Float
         brewer: String
+        reviews: [ID]
         _id: ID
+    }
+
+    type Brewer {
+        name: String
+        location: String
+        beers: [ID]
+        reviews: [ID]
     }
 
     type Query {
