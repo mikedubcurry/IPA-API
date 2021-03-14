@@ -1,4 +1,3 @@
-// TODO: add nodemon to auto restart server in DEVELOPMENT
 require("dotenv").config();
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
