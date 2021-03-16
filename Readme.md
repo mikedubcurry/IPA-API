@@ -1,4 +1,5 @@
 # The IPA-API
+- [ ] start migrating to TypeScript
 
 ## What
 
@@ -23,3 +24,4 @@ MONGO_CLUSTER_URL
 MONGO_USERNAME
 MONGO_PASSWORD
 ```
+ 
