@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const BrewerSchema = new Schema({
@@ -20,4 +20,5 @@ const BrewerSchema = new Schema({
     },
 });
 
-module.exports = mongoose.model("Brewer", BrewerSchema);
+const model = mongoose.model("Brewer", BrewerSchema);
+export default model;

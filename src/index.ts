@@ -1,9 +1,10 @@
-require("dotenv").config();
-const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
-const mongoose = require("mongoose");
+import { config } from "dotenv";
+config();
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
+import mongoose from "mongoose";
 
-const { typeDefs, resolvers } = require("./schema");
+import { typeDefs, resolvers } from "./schema";
 
 const dbUri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@sandbox.oyhve.mongodb.net/${process.env.MONGO_CLUSTER_URL}?retryWrites=true&w=majority`;
 mongoose.connect(dbUri, { useUnifiedTopology: true, useNewUrlParser: true });

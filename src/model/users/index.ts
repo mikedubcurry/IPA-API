@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -31,4 +31,4 @@ const UserSchema = new Schema({
 // add pre-save hook to hash password
 // add compare password logic to compare a hashed password with the hashed saved password
 
-module.exports = mongoose.model("User", UserSchema);
+export default mongoose.model("User", UserSchema);

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const IpaSchema = new Schema({
@@ -28,5 +28,6 @@ const IpaSchema = new Schema({
         required: false,
     },
 });
+const model = mongoose.model("Ipa", IpaSchema);
 
-module.exports = mongoose.model("Ipa", IpaSchema);
+export default model;

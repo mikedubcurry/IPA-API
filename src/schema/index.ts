@@ -1,8 +1,8 @@
 // TODO: split typedefs and resolvers into separate files
 // TODO: create controllers to run in resolvers
-const { gql } = require("apollo-server-express");
+import { gql } from "apollo-server-express";
 
-const { Ipa } = require("../model");
+import { Ipa } from "../model";
 
 // TODO: update typeDefs to match db models
 const typeDefs = gql`
@@ -37,4 +37,4 @@ const resolvers = {
     },
 };
 
-module.exports = { typeDefs, resolvers };
+export { typeDefs, resolvers };
