@@ -4,7 +4,9 @@
     "description": "an API for IPAs",
     "main": "src/index.js",
     "scripts": {
-        "dev": "nodemon src/index.js",
+        "build": "node_modules/.bin/tsc",
+        "build:watch":"node_modules/.bin/tsc --watch",
+        "watch": "nodemon build/index.js ",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "mikedubcurry",
