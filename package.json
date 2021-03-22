@@ -4,11 +4,9 @@
     "description": "an API for IPAs",
     "main": "src/index.js",
     "scripts": {
-        "build": "node_modules/.bin/tsc && node ./build/index.js",
-        "build:watch": "node_modules/.bin/tsc --watch",
-        "watch": "nodemon --watch build/index.js --exec 'npm run build' ",
+        "compile": "node_modules/.bin/tsc && node ./build/index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "node_modules/.bin/nodemon -e ts --exec \"npm run build\""
+        "dev": "node_modules/.bin/nodemon -e ts --exec \"npm run compile\""
     },
     "author": "mikedubcurry",
     "license": "ISC",
