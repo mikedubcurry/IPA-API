@@ -1,10 +1,11 @@
 import { Sequelize } from 'sequelize';
 
-import { UserFactory } from './users';
-import { BrewerFactory } from './brewers';
-import { IpaFactory } from './ipas';
+import { User } from './users';
+import { Brewer } from './brewers';
+import { Ipa } from './ipas';
+import { Review } from './reviews';
 
-export const dbConfig = new Sequelize({
+export const sequelize = new Sequelize({
 	database: process.env.DB_NAME,
 	username: process.env.DB_USER,
 	password: process.env.DB_USER_PW,
@@ -13,6 +14,6 @@ export const dbConfig = new Sequelize({
 	port: 5432,
 });
 
-export const User = UserFactory(dbConfig);
-export const Ipa = IpaFactory(dbConfig);
-export const Brewer = BrewerFactory(dbConfig);
+// initialize models
+// set up relations
+// export for use in controllers
