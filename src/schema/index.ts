@@ -5,7 +5,8 @@ import { User } from '../model';
 // import { Ipa, Brewer } from '../model';
 import { typeDefs } from './typedefs';
 import isEmail from 'isemail';
-import * as uuid from 'uuid'
+import * as uuid from 'uuid';
+import jwt from 'jsonwebtoken';
 
 // TODO: update typeDefs to match db models
 // const typeDefs = gql`
@@ -45,19 +46,25 @@ const resolvers = {
 	},
 	Mutation: {
 		signup: async (_: any, { username, email, password }: signupArgs) => {
-			
 			const validEmail = isEmail.validate(email);
 			if (!validEmail) {
 				return { error: email + ' is an invalid email' };
 			}
 			const alreadyExists = await User.findAll({ where: { email } });
 			if (!alreadyExists.length) {
-				const newUser = await User.create({ userId: uuid.v4(), username, email, password });
+				const newUser = await User.create({
+					userId: uuid.v4(),
+					username,
+					email,
+					password,
+				});
 				await newUser.save();
-				
-				return newUser
+
+				const token =  jwt.sign({ userId: newUser.userId }, 'jwtSecret');
+
+				return {token};
 			} else {
-				throw Error('user already exists')
+				throw Error('user already exists');
 			}
 		},
 	},

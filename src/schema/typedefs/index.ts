@@ -32,7 +32,7 @@ export const typeDefs = gql`
 		ipas: [IPA]
 	}
 	type Mutation {
-		signup(username: String, email: String, password: String): User
+		signup(username: String, email: String, password: String): Token
 	}
 
 	#get all ipas and their brewers
