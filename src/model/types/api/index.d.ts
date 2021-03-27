@@ -2,44 +2,46 @@ import { Optional } from 'sequelize';
 
 // User
 export interface UserAttributes {
-	id: number;
-	name: string;
+	userId: string;
+	username: string;
 	email: string;
 	password: string;
 }
 
 export interface UserCreationAttributes
-	extends Optional<UserAttributes, 'id'> {}
+	extends Optional<UserAttributes, 'userId'> {}
 
 // Ipa
 export interface IpaAttributes {
-	id: number;
-	name: string;
+	ipaId: string;
+	ipaName: string;
 	description: string;
+	brewerId: string;
 	isAlcoholic: boolean;
 	alcohol?: number;
 }
 
-export interface IpaCreationAttributes extends Optional<IpaAttributes, 'id'> {}
+export interface IpaCreationAttributes extends Optional<IpaAttributes, 'ipaId' | 'alcohol'> {}
 
 // Brewer
 export interface BrewerAttributes {
-	id: number;
-	name: string;
+	brewerId: string;
+	brewerName: string;
 	location: string;
 }
 
 export interface BrewerCreationAttributes
-	extends Optional<BrewerAttributes, 'id'> {}
+	extends Optional<BrewerAttributes, 'brewerId'> {}
 
 // Review
 export interface ReviewAttributes {
-	id: number;
+	revId: string;
 	title: string;
 	text: string;
 	score: number;
-	userId: number;
+	ipaId: string;
+	authorId: string;
 }
 
 export interface ReviewCreationAttributes
-	extends Optional<ReviewAttributes, 'id'> {}
+	extends Optional<ReviewAttributes, 'revId'> {}

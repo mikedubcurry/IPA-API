@@ -9,7 +9,7 @@ This application will serve the purpose of documenting different beverages, thei
 
 ## How
 
-This application will leverage an Express/Apollo GraphQL API fronting a MongoDB database. Eventually I plan on adding user authentication so more people other than myself can access the information and if they possess authorization roles. Once a rough implementation is drafted, I'd like to add a caching layer with Redis to save time hitting the database.
+This application will leverage an Apollo GraphQL API fronting a PostgreSql database. Eventually I plan on adding user authentication (currently underway) so more people other than myself can access the information and if they possess authorization roles. Once a rough implementation is drafted, I'd like to add a caching layer with Redis to save time hitting the database.
 
 ## Why
 
@@ -17,11 +17,12 @@ While I think this application is kinda cool and useful, I understand most other
 
 ## Other Info
 
-This application assumes you have at least a free-teir MongoDB instance running somewhere with the necessary environment variables:
+This application currently uses a locally hosted PostgreSQL database. Use whatever db name, user name and password you want, but you'll have to set that up yourself.
 
+Some environment variables I'm using:
 ```
-MONGO_CLUSTER_URL
-MONGO_USERNAME
-MONGO_PASSWORD
+DB_NAME
+DB_USER
+DB_USER_PW
 ```
  

@@ -8,17 +8,15 @@ import {
 import { IpaAttributes, IpaCreationAttributes } from '../types/api';
 import { Review } from '../reviews';
 
-export class Ipa
-	extends Model<IpaAttributes, IpaCreationAttributes>
-	implements IpaAttributes {
-	public id!: number;
-	public name!: string;
-	public description!: string;
+export class Ipa extends Model<IpaAttributes, IpaCreationAttributes> {
+	public ipaId!: string;
+	public ipaName!: string;
+	public ipaDescription!: string;
 	public isAlcoholic!: boolean;
 	public alcohol?: number;
-
-	public readonly createdAt!: Date;
-	public readonly updatedAt!: Date;
+	public brewerId!: string;
+	public createdAt!: Date;
+	public updatedAt!: Date;
 
 	public getReviews!: HasManyGetAssociationsMixin<Review>;
 	public createReview!: HasManyCreateAssociationMixin<Review>;

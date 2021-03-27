@@ -6,24 +6,24 @@ import {
 } from 'sequelize';
 
 import { BrewerAttributes, BrewerCreationAttributes } from '../types/api';
-import { Review } from '../reviews';
+import { Ipa } from '../ipas';
 
 export class Brewer
 	extends Model<BrewerAttributes, BrewerCreationAttributes>
 	implements BrewerAttributes {
-	public id!: number;
-	public name!: string;
+	public brewerId!: string;
+	public brewerName!: string;
 	public location!: string;
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
 
-	public getReviews!: HasManyGetAssociationsMixin<Review>;
-	public createReview!: HasManyCreateAssociationMixin<Review>;
+	public getIpas!: HasManyGetAssociationsMixin<Ipa>;
+	public createIpa!: HasManyCreateAssociationMixin<Ipa>;
 
-	public readonly reviews?: Review[];
+	public readonly ipas?: Ipa[];
 
 	public static associations: {
-		reviews: Association<Brewer, Review>;
+		ipas: Association<Brewer, Ipa>;
 	};
 }
