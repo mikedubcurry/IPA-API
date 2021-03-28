@@ -1,4 +1,4 @@
-// TODO: split typedefs and resolvers into separate files
+// TODO: split resolvers into own file
 // TODO: create controllers to run in resolvers
 import { gql } from 'apollo-server';
 import { User } from '../model';
@@ -8,30 +8,6 @@ import isEmail from 'isemail';
 import * as uuid from 'uuid';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
-
-// TODO: update typeDefs to match db models
-// const typeDefs = gql`
-// 	type IPA {
-// 		name: String
-// 		description: String
-// 		isAlcoholic: Boolean
-// 		alcohol: Float
-// 		brewer: String
-// 		reviews: [ID]
-// 		_id: ID
-// 	}
-
-// 	type Brewer {
-// 		name: String
-// 		location: String
-// 		beers: [ID]
-// 		reviews: [ID]
-// 	}
-
-// 	type Query {
-// 		ipas: [IPA]
-// 	}
-// `;
 
 const resolvers = {
 	Query: {
