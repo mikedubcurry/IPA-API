@@ -9,13 +9,17 @@ import { UserAttributes, UserCreationAttributes } from '../model/types/api';
 
 interface IStore {
 	store: {
-		user: User;
+		User: User;
 	};
 }
 
-class UserApi extends DataSource {
+interface TokenResponse {
+	token: string;
+}
+
+export class UserApi extends DataSource {
 	public store;
-	public context;
+	// public context;
 	constructor({ store }: IStore) {
 		super();
 		this.store = store;
@@ -24,5 +28,35 @@ class UserApi extends DataSource {
 	initialize(config) {
 		this.context = config.context;
 	}
-	
+
+	async createUser(
+		username: string,
+		email: string,
+		password: string
+	): Promise<TokenResponse> {
+		const invalidEmail = !isEmail.validate(email);
+		if (invalidEmail) {
+			throw Error('invalid email');
+		}
+		if(!password || !email || !username) {
+			throw Error("must supply username, email, and password")
+		}
+		const alreadyExists = await this.store.User.findAll({
+			where: { [Op.or]: [{ email }, { username }] },
+		});
+		if (alreadyExists.length) {
+			throw Error('user already exists');
+		}
+		const newUser = await this.store.User.create({
+			userId: uuid.v4(),
+			username,
+			email,
+			password,
+		});
+		await newUser.save();
+
+		const token = jwt.sign({ userId: newUser.userId }, 'jwtSecret');
+
+		return { token };
+	}
 }

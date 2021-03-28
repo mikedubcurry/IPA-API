@@ -3,16 +3,30 @@ import { ApolloServer } from 'apollo-server';
 import jwt from 'jsonwebtoken';
 config();
 
-import { sequelize } from './model';
+import { createStore } from './model';
 import { typeDefs, resolvers } from './schema';
+import { UserApi } from './datasources';
 
-// const store = createStore();
-sequelize.authenticate({ logging: false });
-sequelize.sync({ force: true, logging: false });
+const store = createStore();
+store.sequelize.authenticate({ logging: false });
+store.sequelize.sync({ force: true, logging: false });
+
+const context = async ({ req }) => {
+	const token = (req.headers && req.headers.authorization) || '';
+	const { userId } = token && jwt.verify(token, 'jwtSecret');
+	console.log(userId);
+	return { user: userId };
+};
+
+const dataSources = () => ({
+	userApi: new UserApi({ store }),
+});
 
 const server = new ApolloServer({
 	typeDefs,
 	resolvers,
+	dataSources,
+	context,
 });
 
 server
