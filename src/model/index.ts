@@ -25,6 +25,7 @@ User.init(
 		username: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			unique: true,
 		},
 		email: {
 			type: DataTypes.STRING,
@@ -141,8 +142,6 @@ Brewer.hasMany(Ipa, {
 	foreignKey: 'ipaId',
 });
 Ipa.belongsTo(Brewer, { foreignKey: 'brewerId' });
-
-
 
 export { User, Review, Ipa, Brewer, sequelize };
 // }
