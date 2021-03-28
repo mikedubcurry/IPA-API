@@ -1,15 +1,13 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
-import { User } from '../model';
 import isEmail from 'isemail';
 import * as uuid from 'uuid';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
-import { Model } from 'sequelize';
-import { UserAttributes, UserCreationAttributes } from '../model/types/api';
+import { store } from '../index';
 
 interface IStore {
 	store: {
-		User: User;
+		User: typeof store.User;
 	};
 }
 
@@ -17,15 +15,19 @@ interface TokenResponse {
 	token: string;
 }
 
+interface IContext {
+	[key: string]: string;
+}
+
 export class UserApi extends DataSource {
 	public store;
-	// public context;
+	public context!: IContext;
 	constructor({ store }: IStore) {
 		super();
 		this.store = store;
 	}
 
-	initialize(config) {
+	initialize(config: DataSourceConfig<IContext>) {
 		this.context = config.context;
 	}
 
@@ -38,8 +40,8 @@ export class UserApi extends DataSource {
 		if (invalidEmail) {
 			throw Error('invalid email');
 		}
-		if(!password || !email || !username) {
-			throw Error("must supply username, email, and password")
+		if (!password || !email || !username) {
+			throw Error('must supply username, email, and password');
 		}
 		const alreadyExists = await this.store.User.findAll({
 			where: { [Op.or]: [{ email }, { username }] },
@@ -55,7 +57,10 @@ export class UserApi extends DataSource {
 		});
 		await newUser.save();
 
-		const token = jwt.sign({ userId: newUser.userId }, 'jwtSecret');
+		const token = jwt.sign(
+			{ userId: newUser.userId },
+			process.env.JWT_SECRET || '' 
+		);
 
 		return { token };
 	}

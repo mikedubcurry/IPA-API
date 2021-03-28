@@ -20,36 +20,14 @@ const resolvers = {
 		signup: async (
 			_: any,
 			{ username, email, password }: SignupArgs,
-			{ dataSources }
+			context: { dataSources: any }
 		) => {
-			const tokenResponse = await dataSources.userApi.createUser(
+			const tokenResponse = await context.dataSources.users.createUser(
 				username,
 				email,
 				password
 			);
 			return tokenResponse;
-			// const validEmail = isEmail.validate(email);
-			// if (!validEmail) {
-			// 	throw Error("invalid email")
-			// }
-			// const alreadyExists = await User.findAll({ where: {
-			// 	[Op.or]: [{email}, {username}]
-			// } });
-			// if (!alreadyExists.length) {
-			// 	const newUser = await User.create({
-			// 		userId: uuid.v4(),
-			// 		username,
-			// 		email,
-			// 		password,
-			// 	});
-			// 	await newUser.save();
-
-			// 	const token = jwt.sign({ userId: newUser.userId }, 'jwtSecret');
-
-			// 	return { token };
-			// } else {
-			// 	throw Error('user already exists');
-			// }
 		},
 		// login: async (_: any, { login, password }: LoginArgs) => {
 		// 	const loginIsEmail = isEmail.validate(login);
