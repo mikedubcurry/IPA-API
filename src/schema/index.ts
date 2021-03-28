@@ -20,7 +20,7 @@ const resolvers = {
 		signup: async (
 			_: any,
 			{ username, email, password }: SignupArgs,
-			{ dataSources }: Context
+			{ dataSources }
 		) => {
 			const tokenResponse = await dataSources.userApi.createUser(
 				username,
