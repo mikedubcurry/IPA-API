@@ -1,5 +1,6 @@
 import { DataTypes, Sequelize } from 'sequelize';
 
+import {hashPassword} from './utils'
 import { User } from './users';
 import { Brewer } from './brewers';
 import { Ipa } from './ipas';
@@ -40,6 +41,15 @@ export function createStore() {
 		{
 			sequelize,
 			tableName: 'users',
+			hooks: {
+				beforeCreate: (user, options) => {
+					return hashPassword(user.password).then(success => {
+						user.password = success
+					}).catch(err => {
+						throw err;
+					})
+				},
+			},
 		}
 	);
 

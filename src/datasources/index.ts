@@ -3,7 +3,10 @@ import isEmail from 'isemail';
 import * as uuid from 'uuid';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
+import bcrypt from 'bcrypt';
+
 import { store } from '../index';
+import { User } from '../model/users';
 
 interface IStore {
 	store: {
@@ -31,6 +34,7 @@ export class UserApi extends DataSource {
 		this.context = config.context;
 	}
 
+	// create user and return auth token
 	async createUser(
 		username: string,
 		email: string,
@@ -56,12 +60,31 @@ export class UserApi extends DataSource {
 			password,
 		});
 		await newUser.save();
-
 		const token = jwt.sign(
 			{ userId: newUser.userId },
-			process.env.JWT_SECRET || '' 
+			process.env.JWT_SECRET || ''
 		);
-
 		return { token };
+	}
+
+	// compare password and return token
+	async login(login: string, password: string) {
+		if (!login || !password)
+			throw Error('must enter username/email and password');
+		const loginIsEmail = isEmail.validate(login);
+
+		const whereOption = loginIsEmail ? { email: login } : { username: login };
+		const user = await User.findOne({ where: whereOption });
+		if (user) {
+			const pwMatches = await bcrypt.compare(password, user.password);
+
+			if (pwMatches) {
+				const token = jwt.sign(
+					{ userId: user.userId },
+					process.env.JWT_SECRET || ''
+				);
+				return { token };
+			}
+		} else throw Error('incorrect username or password');
 	}
 }

@@ -1,6 +1,7 @@
 // TODO: split resolvers into own file
 // TODO: create controllers to run in resolvers
 import { gql } from 'apollo-server';
+import { isContext } from 'node:vm';
 import { typeDefs } from './typedefs';
 
 const resolvers = {
@@ -29,19 +30,17 @@ const resolvers = {
 			);
 			return tokenResponse;
 		},
-		// login: async (_: any, { login, password }: LoginArgs) => {
-		// 	const loginIsEmail = isEmail.validate(login);
-
-		// 	const whereOption = loginIsEmail ? { email: login } : { username: login };
-
-		// 	const user = await User.findOne({ where: whereOption });
-		// 	if (password === user?.password) {
-		// 		const token = jwt.sign({ userId: user.userId }, 'jwtSecret');
-		// 		return { token };
-		// 	} else {
-		// 		throw Error('username/email or password are incorrect');
-		// 	}
-		// },
+		login: async (
+			_: any,
+			{ login, password }: LoginArgs,
+			context: { dataSources: any }
+		) => {
+			const tokenResponse = await context.dataSources.users.login(
+				login,
+				password
+			);
+			return tokenResponse;
+		},
 	},
 };
 
