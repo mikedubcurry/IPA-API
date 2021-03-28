@@ -45,6 +45,7 @@ const resolvers = {
 		},
 	},
 	Mutation: {
+		// TODO: extract signup logic into DataSource via apollo-datasource
 		signup: async (_: any, { username, email, password }: signupArgs) => {
 			const validEmail = isEmail.validate(email);
 			if (!validEmail) {
@@ -60,9 +61,9 @@ const resolvers = {
 				});
 				await newUser.save();
 
-				const token =  jwt.sign({ userId: newUser.userId }, 'jwtSecret');
+				const token = jwt.sign({ userId: newUser.userId }, 'jwtSecret');
 
-				return {token};
+				return { token };
 			} else {
 				throw Error('user already exists');
 			}
