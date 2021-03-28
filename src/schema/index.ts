@@ -51,8 +51,8 @@ const resolvers = {
 			if (!validEmail) {
 				return { error: email + ' is an invalid email' };
 			}
-			const alreadyExists = await User.findAll({ where: { email } });
-			if (!alreadyExists.length) {
+			const alreadyExists = await User.findOne({ where: { email } });
+			if (!alreadyExists) {
 				const newUser = await User.create({
 					userId: uuid.v4(),
 					username,
@@ -70,20 +70,15 @@ const resolvers = {
 		},
 		login: async (_: any, { login, password }: LoginArgs) => {
 			const loginIsEmail = isEmail.validate(login);
-			if (loginIsEmail) {
-				const user = await User.findOne({ where: { email: login } });
-				if (password === user?.password) {
-					const token = jwt.sign({ userId: user.userId }, 'jwtSecret');
 
-					return { token };
-				} else throw Error('email or password were incorrect');
+			const whereOption = loginIsEmail ? { email: login } : { username: login };
+
+			const user = await User.findOne({ where: whereOption });
+			if (password === user?.password) {
+				const token = jwt.sign({ userId: user.userId }, 'jwtSecret');
+				return { token };
 			} else {
-				const user = await User.findOne({ where: { username: login } });
-				if (password === user?.password) {
-					const token = jwt.sign({ userId: user.userId }, 'jwtSecret');
-
-					return {token}
-				} else throw Error('username or password were incorrect');
+				throw Error('username/email or password are incorrect');
 			}
 		},
 	},
