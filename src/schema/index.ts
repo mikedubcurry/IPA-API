@@ -7,6 +7,7 @@ import { typeDefs } from './typedefs';
 import isEmail from 'isemail';
 import * as uuid from 'uuid';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 
 // TODO: update typeDefs to match db models
 // const typeDefs = gql`
@@ -49,10 +50,12 @@ const resolvers = {
 		signup: async (_: any, { username, email, password }: SignupArgs) => {
 			const validEmail = isEmail.validate(email);
 			if (!validEmail) {
-				return { error: email + ' is an invalid email' };
+				throw Error("invalid email")
 			}
-			const alreadyExists = await User.findOne({ where: { email } });
-			if (!alreadyExists) {
+			const alreadyExists = await User.findAll({ where: {
+				[Op.or]: [{email}, {username}]
+			} });
+			if (!alreadyExists.length) {
 				const newUser = await User.create({
 					userId: uuid.v4(),
 					username,
