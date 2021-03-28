@@ -1,24 +1,29 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import {
+	Association,
+	Model,
+	HasManyGetAssociationsMixin,
+	HasManyCreateAssociationMixin,
+} from 'sequelize';
 
-const BrewerSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    location: {
-        type: String,
-        required: false,
-    },
-    beers: {
-        type: [Schema.Types.ObjectId],
-        required: true,
-    },
-    reviews: {
-        type: [Schema.Types.ObjectId],
-        required: false,
-    },
-});
+import { BrewerAttributes, BrewerCreationAttributes } from '../types/api';
+import { Ipa } from '../ipas';
 
-const model = mongoose.model("Brewer", BrewerSchema);
-export default model;
+export class Brewer
+	extends Model<BrewerAttributes, BrewerCreationAttributes>
+	implements BrewerAttributes {
+	public brewerId!: string;
+	public brewerName!: string;
+	public location!: string;
+
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
+
+	public getIpas!: HasManyGetAssociationsMixin<Ipa>;
+	public createIpa!: HasManyCreateAssociationMixin<Ipa>;
+
+	public readonly ipas?: Ipa[];
+
+	public static associations: {
+		ipas: Association<Brewer, Ipa>;
+	};
+}

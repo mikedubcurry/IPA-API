@@ -1,40 +1,58 @@
-// TODO: split typedefs and resolvers into separate files
+// TODO: split resolvers into own file
 // TODO: create controllers to run in resolvers
-import { gql } from "apollo-server-express";
-
-import { Ipa } from "../model";
-
-// TODO: update typeDefs to match db models
-const typeDefs = gql`
-    type IPA {
-        name: String
-        description: String
-        isAlcoholic: Boolean
-        alcohol: Float
-        brewer: String
-        reviews: [ID]
-        _id: ID
-    }
-
-    type Brewer {
-        name: String
-        location: String
-        beers: [ID]
-        reviews: [ID]
-    }
-
-    type Query {
-        ipas: [IPA]
-    }
-`;
+import { gql } from 'apollo-server';
+import { isContext } from 'node:vm';
+import { typeDefs } from './typedefs';
 
 const resolvers = {
-    Query: {
-        ipas: async () => {
-            const ipas = await Ipa.find({});
-            return ipas;
-        },
-    },
+	Query: {
+		ipas: async () => {
+			// const ipas = await Ipa.find({});
+			//       ipas.forEach(async ipa => {
+			//           console.log(ipa)
+			//           let brewer = ipa.brewer;
+			//           brewer = await Brewer.findOne({_id: brewer})
+			//       })
+			// return ipas;
+		},
+	},
+	Mutation: {
+		// TODO: extract signup logic into DataSource via apollo-datasource
+		signup: async (
+			_: any,
+			{ username, email, password }: SignupArgs,
+			context: { dataSources: any }
+		) => {
+			const tokenResponse = await context.dataSources.users.createUser(
+				username,
+				email,
+				password
+			);
+			return tokenResponse;
+		},
+		login: async (
+			_: any,
+			{ login, password }: LoginArgs,
+			context: { dataSources: any }
+		) => {
+			const tokenResponse = await context.dataSources.users.login(
+				login,
+				password
+			);
+			return tokenResponse;
+		},
+	},
 };
+
+interface SignupArgs {
+	username: string;
+	email: string;
+	password: string;
+}
+
+interface LoginArgs {
+	login: string;
+	password: string;
+}
 
 export { typeDefs, resolvers };
