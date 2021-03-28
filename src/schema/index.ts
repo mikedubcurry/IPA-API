@@ -46,7 +46,7 @@ const resolvers = {
 	},
 	Mutation: {
 		// TODO: extract signup logic into DataSource via apollo-datasource
-		signup: async (_: any, { username, email, password }: signupArgs) => {
+		signup: async (_: any, { username, email, password }: SignupArgs) => {
 			const validEmail = isEmail.validate(email);
 			if (!validEmail) {
 				return { error: email + ' is an invalid email' };
@@ -68,11 +68,36 @@ const resolvers = {
 				throw Error('user already exists');
 			}
 		},
+		login: async (_: any, { login, password }: LoginArgs) => {
+			const loginIsEmail = isEmail.validate(login);
+			if (loginIsEmail) {
+				const user = await User.findOne({ where: { email: login } });
+				if (password === user?.password) {
+					const token = jwt.sign({ userId: user.userId }, 'jwtSecret');
+
+					return { token };
+				} else throw Error('email or password were incorrect');
+			} else {
+				const user = await User.findOne({ where: { username: login } });
+				if (password === user?.password) {
+					const token = jwt.sign({ userId: user.userId }, 'jwtSecret');
+
+					return {token}
+				} else throw Error('username or password were incorrect');
+			}
+		},
 	},
 };
-interface signupArgs {
+
+interface SignupArgs {
 	username: string;
 	email: string;
 	password: string;
 }
+
+interface LoginArgs {
+	login: string;
+	password: string;
+}
+
 export { typeDefs, resolvers };
