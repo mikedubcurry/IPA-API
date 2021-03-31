@@ -1,8 +1,7 @@
 // TODO: split resolvers into own file
 // TODO: create controllers to run in resolvers
-import { gql } from 'apollo-server';
-import { isContext } from 'node:vm';
-import { typeDefs } from './typedefs';
+const { gql } = require('apollo-server');
+const { typeDefs } = require('./typedefs');
 
 const resolvers = {
 	Query: {
@@ -18,11 +17,7 @@ const resolvers = {
 	},
 	Mutation: {
 		// TODO: extract signup logic into DataSource via apollo-datasource
-		signup: async (
-			_: any,
-			{ username, email, password }: SignupArgs,
-			context: { dataSources: any }
-		) => {
+		signup: async (_, { username, email, password }, context) => {
 			const tokenResponse = await context.dataSources.users.createUser(
 				username,
 				email,
@@ -30,11 +25,7 @@ const resolvers = {
 			);
 			return tokenResponse;
 		},
-		login: async (
-			_: any,
-			{ login, password }: LoginArgs,
-			context: { dataSources: any }
-		) => {
+		login: async (_, { login, password }, context) => {
 			const tokenResponse = await context.dataSources.users.login(
 				login,
 				password
@@ -44,15 +35,4 @@ const resolvers = {
 	},
 };
 
-interface SignupArgs {
-	username: string;
-	email: string;
-	password: string;
-}
-
-interface LoginArgs {
-	login: string;
-	password: string;
-}
-
-export { typeDefs, resolvers };
+module.exports = { typeDefs, resolvers };

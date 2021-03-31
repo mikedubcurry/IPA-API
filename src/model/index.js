@@ -1,12 +1,12 @@
-import { DataTypes, Sequelize } from 'sequelize';
+const { DataTypes, Sequelize } = require('sequelize');
 
-import {hashPassword} from './utils'
-import { User } from './users';
-import { Brewer } from './brewers';
-import { Ipa } from './ipas';
-import { Review } from './reviews';
+const { hashPassword } = require('./utils');
+const { User } = require('./users');
+const { Brewer } = require('./brewers');
+const { Ipa } = require('./ipas');
+const { Review } = require('./reviews');
 
-export function createStore() {
+function createStore() {
 	const sequelize = new Sequelize({
 		database: process.env.DB_NAME,
 		username: process.env.DB_USER,
@@ -14,6 +14,7 @@ export function createStore() {
 		dialect: 'postgres',
 		host: 'localhost',
 		port: 5432,
+		logging: false,
 	});
 
 	// initialize models
@@ -43,11 +44,13 @@ export function createStore() {
 			tableName: 'users',
 			hooks: {
 				beforeCreate: (user, options) => {
-					return hashPassword(user.password).then(success => {
-						user.password = success
-					}).catch(err => {
-						throw err;
-					})
+					return hashPassword(user.password)
+						.then((success) => {
+							user.password = success;
+						})
+						.catch((err) => {
+							throw err;
+						});
 				},
 			},
 		}
@@ -155,3 +158,7 @@ export function createStore() {
 
 	return { User, Review, Ipa, Brewer, sequelize };
 }
+
+module.exports = {
+	createStore,
+};

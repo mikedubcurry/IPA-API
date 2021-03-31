@@ -1,6 +1,6 @@
-import bcrypt from 'bcrypt';
+const bcrypt = require('bcrypt');
 
-export function hashPassword(password: string): Promise<string> {
+function hashPassword(password) {
 	return new Promise(function (resolve, reject) {
 		{
 			bcrypt.genSalt(10, function (err, salt) {
@@ -13,3 +13,5 @@ export function hashPassword(password: string): Promise<string> {
 		}
 	});
 }
+
+module.exports = { hashPassword };
