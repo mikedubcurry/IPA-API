@@ -1,31 +1,38 @@
-import { config } from "dotenv";
+import { config } from 'dotenv';
+import { ApolloServer } from 'apollo-server';
+import jwt from 'jsonwebtoken';
 config();
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
-import mongoose from "mongoose";
 
-import { typeDefs, resolvers } from "./schema";
+import { createStore } from './model';
+import { typeDefs, resolvers } from './schema';
+import { UserApi } from './datasources/';
 
-const dbUri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@sandbox.oyhve.mongodb.net/${process.env.MONGO_CLUSTER_URL}?retryWrites=true&w=majority`;
-mongoose.connect(dbUri, { useUnifiedTopology: true, useNewUrlParser: true });
+export const store = createStore();
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
+store.sequelize.authenticate({ logging: false });
+store.sequelize.sync({ force: true, logging: false });
 
-const app = express();
+
+
+
+const context = async ({ req }) => {
+	const token = (req.headers && req.headers.authorization) || '';
+	const userId = token && jwt.verify(token, process.env.JWT_SECRET || '');
+
+	return { user: userId };
+};
+
+const dataSources = () => ({
+	users: new UserApi({ store }),
+});
+
 const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+	typeDefs,
+	resolvers,
+	dataSources,
+	context,
 });
 
-server.applyMiddleware({ app });
-
-app.use((req, res) => {
-    res.status(200);
-    res.send("Hello!");
-    res.end();
-});
-
-app.listen({ port: 4000 }, () =>
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-);
+server
+	.listen()
+	.then(({ url }) => console.log(`🚀 Your server ready at ${url}`));

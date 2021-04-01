@@ -1,23 +1,26 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import {
+	Association,
+	HasOneGetAssociationMixin,
+	Model,
+} from 'sequelize';
 
-const ReviewSchema = new Schema({
-    reviewText: {
-        type: String,
-        required: true,
-    },
-    author: {
-        type: Schema.Types.ObjectId,
-        required: true,
-    },
-    score: {
-        type: Number,
-        required: true,
-    },
-    entity: {
-        type: Schema.Types.ObjectId,
-        required: true,
-    },
-});
+import { Ipa } from '../ipas';
+import { ReviewAttributes, ReviewCreationAttributes } from '../types/api';
 
-export default mongoose.model("Review", ReviewSchema);
+export class Review
+	extends Model<ReviewAttributes, ReviewCreationAttributes>
+	implements ReviewAttributes {
+	public revId!: string;
+	public title!: string;
+	public text!: string;
+	public score!: number;
+	public authorId!: string;
+	public ipaId!: string;
+
+	public getIpa!: HasOneGetAssociationMixin<Ipa>;
+
+	public readonly ipa?: Ipa;
+
+	public static associations: {
+		ipa: Association<Review, Ipa>;
+	};}

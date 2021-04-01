@@ -1,33 +1,29 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import {
+	Model,
+	HasManyCreateAssociationMixin,
+	HasManyGetAssociationsMixin,
+	Association,
+} from 'sequelize';
 
-const IpaSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    isAlcoholic: {
-        type: Boolean,
-        default: true,
-        required: true,
-    },
-    alcohol: {
-        type: Number,
-        required: true,
-    },
-    brewer: {
-        type: String,
-        required: true,
-    },
-    reviews: {
-        type: [Schema.Types.ObjectId],
-        required: false,
-    },
-});
-const model = mongoose.model("Ipa", IpaSchema);
+import { IpaAttributes, IpaCreationAttributes } from '../types/api';
+import { Review } from '../reviews';
 
-export default model;
+export class Ipa extends Model<IpaAttributes, IpaCreationAttributes> {
+	public ipaId!: string;
+	public ipaName!: string;
+	public ipaDescription!: string;
+	public isAlcoholic!: boolean;
+	public alcohol?: number;
+	public brewerId!: string;
+	public createdAt!: Date;
+	public updatedAt!: Date;
+
+	public getReviews!: HasManyGetAssociationsMixin<Review>;
+	public createReview!: HasManyCreateAssociationMixin<Review>;
+
+	public readonly reviews?: Review[];
+
+	public static associations: {
+		reviews: Association<Ipa, Review>;
+	};
+}

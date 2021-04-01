@@ -1,34 +1,30 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import {
+	Model,
+	Association,
+	HasManyCreateAssociationMixin,
+	HasManyGetAssociationsMixin,
+} from 'sequelize';
 
-const UserSchema = new Schema({
-    username: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    likedBeers: {
-        type: [Schema.Types.ObjectId],
-        required: false,
-    },
-    likedBrewers: {
-        type: [Schema.Types.ObjectId],
-        required: false,
-    },
-    reviews: {
-        type: [Schema.Types.ObjectId],
-        required: false,
-    },
-});
+import { Review } from '../reviews';
+import { UserAttributes, UserCreationAttributes } from '../types/api';
 
-// add pre-save hook to hash password
-// add compare password logic to compare a hashed password with the hashed saved password
+export class User
+	extends Model<UserAttributes, UserCreationAttributes>
+	implements UserAttributes {
+	public userId!: string;
+	public username!: string;
+	public email!: string;
+	public password!: string;
 
-export default mongoose.model("User", UserSchema);
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
+
+	public getReviews!: HasManyGetAssociationsMixin<Review>;
+	public createReview!: HasManyCreateAssociationMixin<Review>;
+
+	public readonly reviews?: Review[];
+
+	public static associations: {
+		reviews: Association<User, Review>;
+	};
+}
