@@ -41,6 +41,17 @@ const resolvers = {
 			);
 			return tokenResponse;
 		},
+		changePassword: async (
+			_: any,
+			{ oldPassword, newPassword }: PasswordArgs,
+			context: { dataSources: any }
+		) => {
+			const tokenResponse = await context.dataSources.users.changePassword(
+				newPassword,
+				oldPassword
+			);
+			return tokenResponse;
+		},
 	},
 };
 
@@ -53,6 +64,11 @@ interface SignupArgs {
 interface LoginArgs {
 	login: string;
 	password: string;
+}
+
+interface PasswordArgs {
+	newPassword: string;
+	oldPassword: string;
 }
 
 export { typeDefs, resolvers };

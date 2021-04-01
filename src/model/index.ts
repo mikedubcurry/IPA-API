@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
+import { v4 } from 'uuid';
 
-import {hashPassword} from './utils'
+import { hashPassword } from './utils';
 import { User } from './users';
 import { Brewer } from './brewers';
 import { Ipa } from './ipas';
@@ -14,6 +15,7 @@ export function createStore() {
 		dialect: 'postgres',
 		host: 'localhost',
 		port: 5432,
+		logging: false,
 	});
 
 	// initialize models
@@ -22,6 +24,7 @@ export function createStore() {
 			userId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			username: {
 				type: DataTypes.STRING,
@@ -43,11 +46,27 @@ export function createStore() {
 			tableName: 'users',
 			hooks: {
 				beforeCreate: (user, options) => {
-					return hashPassword(user.password).then(success => {
-						user.password = success
-					}).catch(err => {
-						throw err;
-					})
+					if (user.changed('password')) {
+						return hashPassword(user.password)
+							.then((success) => {
+								user.password = success;
+							})
+							.catch((err) => {
+								throw err;
+							});
+					}
+				},
+				beforeUpdate: (user, options) => {
+					if (user.changed('password')) {
+						return hashPassword(user.password)
+							.then((success) => {
+								user.set('password', success);
+								// user.password = success;
+							})
+							.catch((err) => {
+								throw err;
+							});
+					}
 				},
 			},
 		}
@@ -58,6 +77,7 @@ export function createStore() {
 			ipaId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			ipaName: {
 				type: DataTypes.STRING,
@@ -91,6 +111,7 @@ export function createStore() {
 			brewerId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			brewerName: {
 				type: DataTypes.STRING,
@@ -109,6 +130,7 @@ export function createStore() {
 			revId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			title: {
 				type: DataTypes.STRING,
