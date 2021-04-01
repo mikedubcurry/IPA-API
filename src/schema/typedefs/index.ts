@@ -32,8 +32,9 @@ export const typeDefs = gql`
 		ipas: [IPA]
 	}
 	type Mutation {
-		signup(username: String, email: String, password: String): Token
-		login(login: String, password: String): Token
+		signup(username: String!, email: String!, password: String!): Token
+		login(login: String!, password: String!): Token
+		changePassword(newPassword: String!, oldPassword: String!): Token
 	}
 
 	#get all ipas and their brewers
@@ -54,7 +55,7 @@ export const typeDefs = gql`
 	#used to discover different brewers
 	# type getBrewers {
 	#     name
-	#     location
+	#     location;
 	#     beers {
 	#         name
 	#         description

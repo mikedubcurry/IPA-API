@@ -5,31 +5,24 @@ config();
 
 import { createStore } from './model';
 import { typeDefs, resolvers } from './schema';
-import { UserApi } from './datasources';
+import { UserApi } from './datasources/';
 
 export const store = createStore();
 
 store.sequelize.authenticate({ logging: false });
 store.sequelize.sync({ force: true, logging: false });
 
-export interface Context {
-	dataSources: {
-		users: UserApi;
-	};
-}
 
-interface IReq {
-	req: { headers: { authorization: string | null } };
-}
 
-const context = async ({ req }: IReq) => {
+
+const context = async ({ req }) => {
 	const token = (req.headers && req.headers.authorization) || '';
 	const userId = token && jwt.verify(token, process.env.JWT_SECRET || '');
 
 	return { user: userId };
 };
 
-const dataSources = (): Context['dataSources'] => ({
+const dataSources = () => ({
 	users: new UserApi({ store }),
 });
 

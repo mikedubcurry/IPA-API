@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export function hashPassword(password: string): Promise<string> {
 	return new Promise(function (resolve, reject) {
@@ -12,4 +13,8 @@ export function hashPassword(password: string): Promise<string> {
 			});
 		}
 	});
+}
+
+export function tokenForUser({ userId }: { userId: string }) {
+	return jwt.sign({ userId }, process.env.JWT_SECRET);
 }
