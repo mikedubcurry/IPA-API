@@ -19,10 +19,6 @@ interface TokenResponse {
 	token: string;
 }
 
-type AuthToken = {
-	userId: string;
-};
-
 interface IContext {
 	[key: string]: string;
 }

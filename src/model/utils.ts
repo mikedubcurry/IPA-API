@@ -16,5 +16,18 @@ export function hashPassword(password: string): Promise<string> {
 }
 
 export function tokenForUser({ userId }: { userId: string }) {
-	return jwt.sign({ userId }, process.env.JWT_SECRET);
+	const token = jwt.sign({ userId }, process.env.JWT_SECRET);
+	if (!token) {
+		throw Error('problem signing token');
+	}
+	return token;
+}
+
+export function isTokenGood(token: string): boolean {
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		return !!decoded;
+	} catch (e) {
+		throw e && e.message;
+	}
 }
