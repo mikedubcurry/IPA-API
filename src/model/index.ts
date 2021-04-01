@@ -1,4 +1,5 @@
 import { DataTypes, Sequelize } from 'sequelize';
+import { v4 } from 'uuid';
 
 import { hashPassword } from './utils';
 import { User } from './users';
@@ -23,6 +24,7 @@ export function createStore() {
 			userId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			username: {
 				type: DataTypes.STRING,
@@ -75,6 +77,7 @@ export function createStore() {
 			ipaId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			ipaName: {
 				type: DataTypes.STRING,
@@ -108,6 +111,7 @@ export function createStore() {
 			brewerId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			brewerName: {
 				type: DataTypes.STRING,
@@ -126,6 +130,7 @@ export function createStore() {
 			revId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
+				defaultValue: v4(),
 			},
 			title: {
 				type: DataTypes.STRING,

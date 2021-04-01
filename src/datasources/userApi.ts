@@ -59,7 +59,6 @@ export class UserApi extends DataSource {
 			throw Error('user already exists');
 		}
 		const newUser = await this.store.User.create({
-			userId: uuid.v4(),
 			username,
 			email,
 			password,
