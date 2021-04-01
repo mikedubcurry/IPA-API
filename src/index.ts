@@ -12,21 +12,18 @@ export const store = createStore();
 store.sequelize.authenticate({ logging: false });
 store.sequelize.sync({ force: true, logging: false });
 
-
-
-
-const context = async ({ req }) => {
+export const context = async ({ req }) => {
 	const token = (req.headers && req.headers.authorization) || '';
 	const userId = token && jwt.verify(token, process.env.JWT_SECRET || '');
 
 	return { user: userId };
 };
 
-const dataSources = () => ({
+export const dataSources = () => ({
 	users: new UserApi({ store }),
 });
 
-const server = new ApolloServer({
+export const server = new ApolloServer({
 	typeDefs,
 	resolvers,
 	dataSources,
@@ -36,3 +33,5 @@ const server = new ApolloServer({
 server
 	.listen()
 	.then(({ url }) => console.log(`🚀 Your server ready at ${url}`));
+
+export { typeDefs, resolvers, UserApi, ApolloServer };
