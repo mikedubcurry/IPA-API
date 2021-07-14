@@ -1,3 +1,6 @@
+# Deprecated
+The backend of IPA-API is currently being moved to SUPABASE
+
 # The IPA-API
 - [ ] start migrating to TypeScript
 
