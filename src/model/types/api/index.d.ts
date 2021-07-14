@@ -5,6 +5,7 @@ export interface UserAttributes {
 	userId: string;
 	username: string;
 	email: string;
+	role: 'ADMIN' | 'PRO' | 'BASIC';
 	password: string;
 }
 
@@ -21,7 +22,8 @@ export interface IpaAttributes {
 	alcohol?: number;
 }
 
-export interface IpaCreationAttributes extends Optional<IpaAttributes, 'ipaId' | 'alcohol'> {}
+export interface IpaCreationAttributes
+	extends Optional<IpaAttributes, 'ipaId' | 'alcohol'> {}
 
 // Brewer
 export interface BrewerAttributes {

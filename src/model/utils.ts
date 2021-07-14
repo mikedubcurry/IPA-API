@@ -15,12 +15,33 @@ export function hashPassword(password: string): Promise<string> {
 	});
 }
 
-export function tokenForUser({ userId }: { userId: string }) {
-	const token = jwt.sign({ userId }, process.env.JWT_SECRET);
+type UserRole = 'ADMIN' | 'PRO' | 'BASIC';
+
+export function tokenForUser({
+	userId,
+	role,
+}: {
+	userId: string;
+	role: UserRole;
+}) {
+	const token = jwt.sign({ userId, role }, process.env.JWT_SECRET, {
+		expiresIn: 600,
+	});
 	if (!token) {
 		throw Error('problem signing token');
 	}
 	return token;
+}
+
+export function getRole(token: string): UserRole {
+	const decoded  = jwt.verify(
+		token,
+		process.env.JWT_SECRET
+	) as { userId: string; role: UserRole };
+	const role = decoded.role;
+	if (role) {
+		return role;
+	}
 }
 
 export function isTokenGood(token: string): boolean {

@@ -5,7 +5,7 @@ config();
 
 import { createStore } from './model';
 import { typeDefs, resolvers } from './schema';
-import { UserApi } from './datasources/';
+import { UserApi, BrewerApi } from './datasources/';
 
 export const store = createStore();
 
@@ -21,6 +21,8 @@ export const context = async ({ req }) => {
 
 export const dataSources = () => ({
 	users: new UserApi({ store }),
+	brewers: new BrewerApi({ store }),
+	// ipas: 
 });
 
 export const server = new ApolloServer({

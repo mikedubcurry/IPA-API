@@ -1,3 +1,3 @@
 import { UserApi } from './userApi';
-
-export { UserApi };
+import {BrewerApi} from './brewerApi'
+export { UserApi, BrewerApi };

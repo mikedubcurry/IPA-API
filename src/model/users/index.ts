@@ -14,6 +14,7 @@ export class User
 	public userId!: string;
 	public username!: string;
 	public email!: string;
+	public role!: 'ADMIN' | 'PRO' | 'BASIC';
 	public password!: string;
 
 	public readonly createdAt!: Date;

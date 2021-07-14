@@ -24,12 +24,17 @@ export function createStore() {
 			userId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
-				defaultValue: v4(),
+				defaultValue: () => v4(),
 			},
 			username: {
 				type: DataTypes.STRING,
 				allowNull: false,
 				unique: true,
+			},
+			role: {
+				type: DataTypes.STRING,
+				allowNull: false,
+				defaultValue: 'BASIC',
 			},
 			email: {
 				type: DataTypes.STRING,
@@ -77,11 +82,12 @@ export function createStore() {
 			ipaId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
-				defaultValue: v4(),
+				defaultValue: () => v4(),
 			},
 			ipaName: {
 				type: DataTypes.STRING,
 				allowNull: false,
+				unique: true,
 			},
 			description: {
 				type: DataTypes.STRING,
@@ -111,11 +117,12 @@ export function createStore() {
 			brewerId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
-				defaultValue: v4(),
+				defaultValue: () => v4(),
 			},
 			brewerName: {
 				type: DataTypes.STRING,
 				allowNull: false,
+				unique: true,
 			},
 			location: {
 				type: DataTypes.STRING,
@@ -130,7 +137,7 @@ export function createStore() {
 			revId: {
 				type: DataTypes.UUID,
 				primaryKey: true,
-				defaultValue: v4(),
+				defaultValue: () => v4(),
 			},
 			title: {
 				type: DataTypes.STRING,
@@ -171,9 +178,18 @@ export function createStore() {
 
 	Brewer.hasMany(Ipa, {
 		sourceKey: 'brewerId',
-		foreignKey: 'ipaId',
+		// foreignKey: 'ipaId',
 	});
 	Ipa.belongsTo(Brewer, { foreignKey: 'brewerId' });
+
+	User.create({
+		username: 'mike',
+		email: 'mike@mike.com',
+		role: 'ADMIN',
+		password: 'password',
+	}).then(user => {
+		user.save()
+	});
 
 	return { User, Review, Ipa, Brewer, sequelize };
 }

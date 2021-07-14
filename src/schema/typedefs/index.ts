@@ -3,17 +3,18 @@ import { gql } from 'apollo-server-express';
 export const typeDefs = gql`
 	#IPA type
 	type IPA {
-		name: String
+		ipaName: String
 		description: String
 		isAlcoholic: Boolean
 		alcohol: Float
 		brewer: Brewer
-		_id: ID
+		ipaId: ID
 	}
 
 	#Brewer Type
 	type Brewer {
-		name: String
+		brewerId: String
+		brewerName: String
 		location: String
 		beers: [IPA]
 	}
@@ -21,6 +22,7 @@ export const typeDefs = gql`
 	type User {
 		userId: String
 		email: String
+		role: String
 		username: String
 	}
 
@@ -28,80 +30,27 @@ export const typeDefs = gql`
 		token: String
 	}
 
+	type Message {
+		message: String
+	}
+
 	type Query {
 		ipas: [IPA]
+		brewers: [Brewer]
+		users: [User]
 	}
 	type Mutation {
 		signup(username: String!, email: String!, password: String!): Token
 		login(login: String!, password: String!): Token
 		changePassword(newPassword: String!, oldPassword: String!): Token
+		changeRole(userId: String!, role: String!): Message
+		addBrewer(brewerName: String!, location: String!): Brewer
+		addIpa(
+			brewerId: String!
+			ipaName: String!
+			description: String!
+			isAlcoholic: Boolean
+			alcohol: Float
+		): IPA
 	}
-
-	#get all ipas and their brewers
-	#used for searching thru beers manually
-	# type getIPAs {
-	#     name
-	#     description
-	#     isAlcoholic
-	#     alocohol
-	#     _id
-	#     brewer {
-	#         name
-	#         _id
-	#     }
-	# }
-
-	#gets all brewers with the beers they make
-	#used to discover different brewers
-	# type getBrewers {
-	#     name
-	#     location;
-	#     beers {
-	#         name
-	#         description
-	#         alcohol
-	#     }
-	# }
 `;
-
-/**
- * `
- *  Query getIPAs {
- *      name
- *      description
- *      isAlcoholic
- *      alocohol
- *      _id
- *      brewer {
- *          name
- *          _id
- *      }
- *      reviews {
- *          reviewText
- *          score
- *          author {
- *              username
- *          }
- *      }
- *  }
- *
- *  Query getBrewers {
- *      name
- *      location
- *      beers {
- *          name
- *          description
- *          alcohol
- *      }
- *      reviews {
- *          reviewText
- *          score
- *          author {
- *              username
- *          }
- *      }
- *  }
- *
- *
- * `
- */

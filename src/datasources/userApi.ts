@@ -1,13 +1,15 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import isEmail from 'isemail';
-import * as uuid from 'uuid';
-import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
 
 import { store } from '../index';
-import { User } from '../model/users';
 import { tokenForUser } from '../model/utils';
+
+class UserNotFoundError extends Error {}
+class InvalidRoleError extends RangeError {}
+class UserAuthError extends Error {}
+class UserInputError extends Error {}
 
 interface IStore {
 	store: {
@@ -26,7 +28,7 @@ interface IContext {
 export class UserApi extends DataSource {
 	public store;
 	public context;
-	constructor({ store }: IStore) {
+	constructor({ store }) {
 		super();
 		this.store = store;
 	}
@@ -43,16 +45,16 @@ export class UserApi extends DataSource {
 	): Promise<TokenResponse> {
 		const invalidEmail = !isEmail.validate(email);
 		if (invalidEmail) {
-			throw Error('invalid email');
+			throw new UserInputError('invalid email');
 		}
 		if (!password || !email || !username) {
-			throw Error('must supply username, email, and password');
+			throw new UserInputError('must supply username, email, and password');
 		}
 		const alreadyExists = await this.store.User.findAll({
 			where: { [Op.or]: [{ email }, { username }] },
 		});
 		if (alreadyExists.length) {
-			throw Error('user already exists');
+			throw new UserAuthError('user already exists');
 		}
 		const newUser = await this.store.User.create({
 			username,
@@ -67,7 +69,7 @@ export class UserApi extends DataSource {
 	// compare password and return token
 	async login(login: string, password: string): Promise<TokenResponse> {
 		if (!login || !password)
-			throw Error('must enter username/email and password');
+			throw new UserInputError('must enter username/email and password');
 		const loginIsEmail = isEmail.validate(login);
 
 		const whereOption = loginIsEmail ? { email: login } : { username: login };
@@ -75,30 +77,58 @@ export class UserApi extends DataSource {
 		if (user) {
 			const pwMatches = await bcrypt.compare(password, user.password);
 
-			if (!!pwMatches) {
+			if (pwMatches) {
 				const token = tokenForUser(user);
 				return { token };
-			} else throw Error('incorrect username or password');
-		} else throw Error('incorrect username or password');
+			} else throw new UserInputError('incorrect username or password');
+		} else throw new UserInputError('incorrect username or password');
+	}
+
+	async allUsers() {
+		const allUsers = await this.store.User.findAll();
+		return allUsers;
+	}
+
+	async changeRole(userId: string, role: 'ADMIN' | 'PRO' | 'BASIC') {
+		const user = this.context.user;
+		if (user.role !== 'ADMIN') {
+			throw new UserAuthError('unauthorized');
+		}
+		if (role !== 'ADMIN' && role !== 'PRO' && role !== 'BASIC') {
+			throw new InvalidRoleError('invalid role');
+		}
+		const candidate = await this.store.User.findByPk(userId);
+		if (!candidate) {
+			throw new UserNotFoundError('user does not exist');
+		}
+
+		const updated = await this.store.User.update(
+			{ role },
+			{ where: { userId } }
+		);
+		if (updated[0]) return { message: 'updated' };
+		else return { message: 'not updated' };
 	}
 
 	async changePassword(newPassword: string, oldPassword: string) {
 		const userId = this.context.user?.userId;
 
 		if (!oldPassword || !newPassword) {
-			throw Error('must enter your old password and a new password');
+			throw new UserInputError(
+				'must enter your old password and a new password'
+			);
 		}
 		if (oldPassword === newPassword) {
-			throw Error('must enter a new password');
+			throw new UserInputError('must enter a new password');
 		}
 		// check old password matches current password
 		const user = await this.store.User.findByPk(userId);
 		if (!user) {
-			throw Error('requested user does not exist');
+			throw new UserNotFoundError('requested user does not exist');
 		}
 		let passwordsMatch = await bcrypt.compare(oldPassword, user.password);
 		if (!passwordsMatch) {
-			throw Error('old password and current password do not match');
+			throw new UserAuthError('old password and current password do not match');
 		}
 		// update user password
 		await user.set('password', newPassword);
